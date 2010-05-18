@@ -1,0 +1,6 @@
+
+dataset=dat/pen
+estimation=Parzen
+k=50
+h=80
+classification=MAP
