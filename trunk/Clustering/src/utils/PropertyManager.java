@@ -11,6 +11,11 @@ public class PropertyManager {
 	private static PropertyManager instance;
 	private static Properties properties;
 	
+	public static void main(String[] args) {
+		PropertyManager properties = PropertyManager.getInstance();
+		System.out.println(properties.getProperty("Dataset"));
+	}
+	
 	private PropertyManager() {
 		properties = new Properties();
 		InputStream propertiesIS;
@@ -36,8 +41,5 @@ public class PropertyManager {
 		return properties.getProperty(key);
 	}
 	
-	public static void main(String[] args) {
-		PropertyManager properties = PropertyManager.getInstance();
-		System.out.println(properties.getProperty("dataset"));
-	}
+	
 }
