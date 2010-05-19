@@ -1,6 +1,5 @@
 package utils;
 import data.Cluster;
-import data.Pattern;
 
 public class ClusterDistance {
 

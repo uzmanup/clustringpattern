@@ -26,21 +26,15 @@ public class SingleLinkage {
 	public List<Cluster> cluster(int k) {
 		Cluster merged = null;
 		ClusterDistance smallestPair;
-
 		initialize();
-	
 		while (clusters.size() > 1) {
 				smallestPair=getSmallestPair();
-
 				merged = mergerClusters(smallestPair.getC1(),smallestPair.getC2());
-			
 				this.clusters.remove(smallestPair.getC1());
 				this.clusters.remove(smallestPair.getC2());
-				
 				this.clusters.add(merged);
 			
 		}
-
 		return clusters;
 	}
 
