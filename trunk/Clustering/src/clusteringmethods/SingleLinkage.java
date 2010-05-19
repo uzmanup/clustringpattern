@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
 import utils.ClusterDistance;
 import utils.Distance;
-
 import data.Cluster;
 import data.Pattern;
 
@@ -55,19 +53,21 @@ public class SingleLinkage {
 		clusters = new ArrayList<Cluster>();
 		iterator = dataSet.keySet().iterator();
 		String key;
-		Pattern pattern;
+		List<Pattern> patternlist;
 		List<Cluster> clusters = new ArrayList<Cluster>();
 		Cluster c;
 
 		// building initial list of clusters
 		while (iterator.hasNext()) {
 			key = (String) iterator.next();
-			pattern = (Pattern) dataSet.get(key);
-
-			// creat a cluster of each pattern
-			c = new Cluster();
-			c.getPatternsList().add(pattern);
-			clusters.add(c);
+			patternlist = dataSet.get(key);
+			
+			for (Pattern pattern : patternlist) {
+				// creat a cluster of each pattern
+				c = new Cluster();
+				c.getPatternsList().add(pattern);
+				clusters.add(c);
+			}
 		}
 		
 	}
@@ -145,16 +145,6 @@ public class SingleLinkage {
 		return minPairDistance;
 	}
 
-	
-	
 
 }
-
-
-
-
-
-
-
-
 
