@@ -26,16 +26,16 @@ public class SingleLinkage {
 		Cluster merged = null;
 		ClusterDistance smallestPair;
 		initialize();
-		
+
 		while (clusters.size() > k) {
+			System.out.println(clusters.size() + " : " + k);
 				smallestPair=getSmallestPair();
 				merged = mergerClusters(smallestPair.getC1(),smallestPair.getC2());
 				this.clusters.remove(smallestPair.getC1());
 				this.clusters.remove(smallestPair.getC2());
 				this.clusters.add(merged);
-			
 		}
-		
+
 		int counter =1;
 		for (Cluster cluster : clusters) {
 			clusterResult.put(counter+"",cluster.getPatterns());
@@ -54,14 +54,12 @@ public class SingleLinkage {
 		iterator = dataSet.keySet().iterator();
 		String key;
 		List<Pattern> patternlist;
-		List<Cluster> clusters = new ArrayList<Cluster>();
 		Cluster c;
 
 		// building initial list of clusters
 		while (iterator.hasNext()) {
 			key = (String) iterator.next();
 			patternlist = dataSet.get(key);
-			
 			for (Pattern pattern : patternlist) {
 				// creat a cluster of each pattern
 				c = new Cluster();
@@ -90,12 +88,14 @@ public class SingleLinkage {
 		Cluster nearstCluster = null;
 		double minDistance = Double.MAX_VALUE;
 		double currentDistance;
-
+		
 		for (Cluster cluster : clusters) {
+			if(!cluster.equals(target)){
 			currentDistance = getMinDistance(target, cluster);
 			if (currentDistance < minDistance) {
 				minDistance = currentDistance;
 				nearstCluster = cluster;
+			}
 			}
 		}
 		ClusterDistance distance=new ClusterDistance(target, nearstCluster);
@@ -133,7 +133,6 @@ public class SingleLinkage {
 		
 		for (Cluster cluster : clusters) {
 			currentPairDistance=getNearstCluster(cluster);
-			
 			if(currentPairDistance.isLessThan(minPairDistance)){
 				minPairDistance.setC1(currentPairDistance.getC1());
 				minPairDistance.setC2(currentPairDistance.getC2());

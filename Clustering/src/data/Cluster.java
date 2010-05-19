@@ -14,7 +14,8 @@ public class Cluster {
 	private List<Cluster> clusterList;
 	
 	public Cluster() {
-		// TODO Auto-generated constructor stub
+		this.patternsList=new ArrayList<Pattern>();
+		this.clusterList=new ArrayList<Cluster>();
 	}
 
 	public List<Cluster> getClusterList() {

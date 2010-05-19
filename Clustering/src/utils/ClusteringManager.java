@@ -63,7 +63,7 @@ public class ClusteringManager {
 	private void getValuse(){
 		PropertyManager manager =PropertyManager.getInstance();
 		Dataset=manager.getProperty("Dataset");
-		ClusteringAlgorithm =manager.getProperty("clusteringAlgorithm");
+		ClusteringAlgorithm =manager.getProperty("ClusteringAlgorithm");
 		Eps=Double.parseDouble(manager.getProperty("Eps"));
 		minPts=Integer.parseInt(manager.getProperty("minPts"));
 		K=Integer.parseInt(manager.getProperty("K"));
