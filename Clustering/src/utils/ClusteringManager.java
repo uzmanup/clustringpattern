@@ -2,12 +2,9 @@ package utils;
 
 import java.util.HashMap;
 import java.util.List;
-
-import clusteringmethods.ClusteringAlgorithm;
 import clusteringmethods.DBSCAN;
 import clusteringmethods.KMedoids;
 import clusteringmethods.SingleLinkage;
-
 import data.Pattern;
 import data.PointReader;
 
@@ -36,9 +33,8 @@ public class ClusteringManager {
 	
 	public void clusterData() {
 		//get options from properties file
-		
-		dataSet=reader.read(Dataset, false);
 		getValuse();
+		dataSet=reader.read(Dataset, false);
 		String title ="";
 		if(ClusteringAlgorithm.equals("DBSCAN")){
 			clusteredDataSet=new DBSCAN(dataSet,Eps,minPts).cluster();
@@ -51,7 +47,7 @@ public class ClusteringManager {
 		else if (ClusteringAlgorithm.equals("SL")){
 		//Single Linkage
 			title ="SingleLinkage Clustering";
-//			clusteredDataSet=new SingleLinkage(dataSet).cluster(K);
+			clusteredDataSet=new SingleLinkage(dataSet).cluster(K);
 		}
 		else {
 			System.err.println("Error in the algorithm name");
@@ -59,9 +55,7 @@ public class ClusteringManager {
 		
 		visualizer=new Visualizer(title);
 		visualizer.visualize(clusteredDataSet,false);
-		
 		evaluator=new ClusteringEvaluator(dataSet,clusteredDataSet);
-		
 		System.out.println("Evaluation : F = "+evaluator.evaluate());
 		
 	}
@@ -73,7 +67,6 @@ public class ClusteringManager {
 		Eps=Double.parseDouble(manager.getProperty("Eps"));
 		minPts=Integer.parseInt(manager.getProperty("minPts"));
 		K=Integer.parseInt(manager.getProperty("K"));
-		
 	}
 
 }

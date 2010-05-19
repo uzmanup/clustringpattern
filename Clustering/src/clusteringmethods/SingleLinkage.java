@@ -14,20 +14,22 @@ import data.Pattern;
 public class SingleLinkage {
 
 	private HashMap<String, List<Pattern>> dataSet;
+	private HashMap<String, List<Pattern>> clusterResult;
 	private Iterator<String> iterator;
 	private List<Cluster> clusters;
-
 	
 	public SingleLinkage(HashMap<String, List<Pattern>> dataSet) {
 		this.dataSet = dataSet;
 	}
 
 	
-	public List<Cluster> cluster(int k) {
+	public HashMap<String, List<Pattern>> cluster(int k) {
+		clusterResult=new HashMap<String, List<Pattern>>();
 		Cluster merged = null;
 		ClusterDistance smallestPair;
 		initialize();
-		while (clusters.size() > 1) {
+		
+		while (clusters.size() > k) {
 				smallestPair=getSmallestPair();
 				merged = mergerClusters(smallestPair.getC1(),smallestPair.getC2());
 				this.clusters.remove(smallestPair.getC1());
@@ -35,9 +37,16 @@ public class SingleLinkage {
 				this.clusters.add(merged);
 			
 		}
-		return clusters;
+		
+		int counter =1;
+		for (Cluster cluster : clusters) {
+			clusterResult.put(counter+"",cluster.getPatterns());
+			counter++;
+		}
+		
+		return clusterResult;
 	}
-
+	
 	
 	//------------------------------------------------------------------------------------------------------------------------------
 	
