@@ -23,7 +23,7 @@ public class SingleLinkage {
 	}
 
 	
-	public Cluster cluster() {
+	public List<Cluster> cluster(int k) {
 		Cluster merged = null;
 		ClusterDistance smallestPair;
 
@@ -41,7 +41,7 @@ public class SingleLinkage {
 			
 		}
 
-		return clusters.get(0);
+		return clusters;
 	}
 
 	
