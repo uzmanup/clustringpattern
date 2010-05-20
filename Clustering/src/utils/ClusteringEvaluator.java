@@ -51,7 +51,7 @@ public class ClusteringEvaluator {
 		System.out.println();
 		FinalF=(semiFinalF / ( (double)totalSize ));
 		totalAcc=totalAcc/(double)totalSize;
-		System.out.println("Total Accurcy = "+ totalAcc);
+		System.out.println("Total Accurcy = "+ totalAcc*100 +" %");
 		System.out.println();
 		return FinalF;
 	}
