@@ -45,17 +45,15 @@ public class ClusteringEvaluator {
 			 System.out.println();
 			 semiFinalF+=((dataSet.get(classkey).size()))*  kf.getF();
 			 System.out.println("class acc " + getClassClusterIntersection(classkey, kf.k));
-			 totalAcc+=getClassClusterIntersection(classkey, kf.k);
+			 totalAcc+=getClassClusterIntersection(classkey, kf.k)+getTN(classkey,kf.k);
 		}
 		
 		totalSize=getTotalSizeOfPatterns();
 		System.out.println("total # of patterns = "+totalSize);
 		System.out.println();
 		FinalF=(semiFinalF / ( (double)totalSize ));
-		totalAcc=totalAcc/(double)totalSize;
-		if(clusteredDataSet.size()==1){
-			totalAcc=(double)clusteredDataSet.size()/(double) dataSet.size();
-		}
+		totalAcc=totalAcc/((double)totalSize * dataSet.size()); 
+		
 		System.out.println("Total Accurcy = "+ totalAcc*100 +" %");
 		System.out.println();
 		return FinalF;
@@ -204,6 +202,24 @@ public class ClusteringEvaluator {
 		return maxKF;
 	}
 
-	
+	private long getTN(String c , String k){
+		Iterator<String> itrclass=dataSet.keySet().iterator();
+		Iterator<String> itrcluster; long sum=0;
+		String ckey = "";String kkey="";
+		while(itrclass.hasNext()){
+			ckey=itrclass.next();
+			itrcluster=clusteredDataSet.keySet().iterator();
+			if(ckey.equals(c)){
+				continue;
+			}
+			while(itrcluster.hasNext()){
+				kkey =itrcluster.next();
+				if(!kkey.equals(k)){
+					sum+=getClassClusterIntersection(ckey, kkey);
+				}
+			}
+		}
+		return sum;
+	}
 	
 }
