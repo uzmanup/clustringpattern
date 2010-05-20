@@ -43,7 +43,7 @@ public class ClusteringEvaluator {
 			 System.out.println("Acc [ "+classkey+" ]= "+acctmp);
 			 System.out.println();
 			 semiFinalF+=((dataSet.get(classkey).size()))*  kf.getF();
-			 totalAcc+=(dataSet.get(classkey).size())* acctmp;
+			 totalAcc+=getClassClusterIntersection(classkey, kf.k);
 		}
 		
 		totalSize=getTotalSizeOfPatterns();
@@ -52,11 +52,10 @@ public class ClusteringEvaluator {
 		FinalF=(semiFinalF / ( (double)totalSize ));
 		totalAcc=totalAcc/(double)totalSize;
 		System.out.println("Total Accurcy = "+ totalAcc);
+		System.out.println();
 		return FinalF;
 	}
-
 	//------------------------------------------------------------------------------------------------------------------------------
-	
 	private long getTotalSizeOfPatterns (){
 		String c;
 		datasetIterator1=dataSet.keySet().iterator();
@@ -88,7 +87,6 @@ public class ClusteringEvaluator {
 			}
 			confusionMatrix.put(c, classCluster);
 		}
-		
 	}
 	
 	//------------------------------------------------------------------------------------------------------------------------------
@@ -111,23 +109,18 @@ public class ClusteringEvaluator {
 	
 	private long getClassClusterIntersection (String c, String k){
 		//#(c,k)
-		return getPatternIntersection(dataSet.get(c), clusteredDataSet.get(k));
+		long ff=getPatternIntersection(dataSet.get(c), clusteredDataSet.get(k));
+		return ff;
 	}
 
 	//------------------------------------------------------------------------------------------------------------------------------	
 	
 	private long getPatternIntersection (List<Pattern> a,List<Pattern> b ) {
 		long counter = 0;
-		if(a.size()>=b.size()){
 			for (Pattern pattern : a) {
 				if(b.contains(pattern)) counter++;
 			}
-		}
-		else{
-			for (Pattern pattern : b) {
-			if(a.contains(pattern)) counter++;	
-			}
-		}
+	
 		return counter;
 	}
 	
