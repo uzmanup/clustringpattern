@@ -1,5 +1,5 @@
 Dataset = dat/half-rings-all.txt
 ClusteringAlgorithm = SL
-Eps = 900
+Eps = 700
 minPts = 3
-K = 2
+K = 3
