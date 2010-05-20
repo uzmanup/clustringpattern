@@ -2,7 +2,6 @@ package clusteringmethods;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import utils.Distance;
 
@@ -19,59 +18,66 @@ public class KMedoids extends ClusteringAlgorithm {
 
 	@Override
 	public HashMap<String, List<Pattern>> cluster() {
-		HashMap<String, List<Pattern>> clusteredPatterns = new HashMap<String, List<Pattern>>();
+		HashMap<String, List<Pattern>> clusteredPatterns;
 		medoids = chooseInitialMedoids();
 		
+		List<Pattern> patternList = new ArrayList<Pattern>();
+		for(String classLabel : dataSet.keySet()){
+			patternList.addAll(dataSet.get(classLabel));
+		}
+		
+		int iterations = 0;
 		Pattern[] newMedoids;
 		do{
+			iterations++;
+			clusteredPatterns = new HashMap<String, List<Pattern>>();
 			for(Pattern medoid : medoids){
 				clusteredPatterns.put(medoid.getTestCluster(), new ArrayList<Pattern>());
+				clusteredPatterns.get(medoid.getTestCluster()).add(medoid);
 			}
-			Iterator<String> classItr = dataSet.keySet().iterator();
-			while(classItr.hasNext()){
-				List<Pattern> classPatterns = dataSet.get(classItr.next());
-				for(Pattern p : classPatterns){
-					double minDistance = Double.MAX_VALUE;
-					
-					for(Pattern medoid : medoids){
+			for(Pattern p : patternList){
+				double minDistance = Double.MAX_VALUE;
+				for(Pattern medoid : medoids){
+					if(!containsPattern(medoids, p)){
 						double distance = Distance.calculateDistance(p, medoid);
 						if(distance < minDistance){
 							minDistance = distance;
 							p.setTestCluster(medoid.getTestCluster());
 						}
 					}
-					clusteredPatterns.get(p.getTestCluster()).add(p);
 				}
+				clusteredPatterns.get(p.getTestCluster()).add(p);
 			}
 			newMedoids = calculateNewMedoids(clusteredPatterns);
 		}while(!stopIterations(newMedoids));
 		
+		System.out.println("Number of Iterations: " + iterations);
 		return clusteredPatterns;
 	}
 
 	private Pattern[] calculateNewMedoids(HashMap<String, List<Pattern>> clusteredPatterns) {
 		Pattern[] newMedoids = new Pattern[k];
 		
-		for(int i = 0; i < medoids.length; i++){
-			Pattern medoid = medoids[i];
-			String medoidCluster = medoid.getTestCluster();
-			List<Pattern> clusterPatterns = clusteredPatterns.get(medoidCluster);
-			newMedoids[i] = getMedoid(clusterPatterns); 
+		int i = 0;
+		for(String cluster : clusteredPatterns.keySet()){
+			newMedoids[i] = getMedoid(clusteredPatterns.get(cluster));
+			newMedoids[i].setTestCluster(i + "");
+			i++;
 		}
+		
 		return newMedoids;
 	}
 
 	private Pattern getMedoid(List<Pattern> clusterPatterns) {
-		double minAvgDistance = Double.MAX_VALUE;
+		double minTotalDistance = Double.MAX_VALUE;
 		Pattern medoid = null;
 		for(Pattern candidatePattern : clusterPatterns){
-			double avgDistance = 0;
+			double TotalDistance = 0;
 			for(Pattern clusterPattern : clusterPatterns){
-				avgDistance += Distance.calculateDistance(candidatePattern, clusterPattern);
+				TotalDistance += Distance.calculateDistance(candidatePattern, clusterPattern);
 			}
-			avgDistance /= clusterPatterns.size();
-			if(avgDistance < minAvgDistance){
-				minAvgDistance = avgDistance;
+			if(TotalDistance < minTotalDistance){
+				minTotalDistance = TotalDistance;
 				medoid = candidatePattern;
 			}
 		}
@@ -79,33 +85,58 @@ public class KMedoids extends ClusteringAlgorithm {
 	}
 
 	private boolean stopIterations(Pattern[] newMedoids) {
-		for(int i = 0; i < medoids.length; i++){
-			if(newMedoids[i] != medoids[i]){
-				return false;
+		boolean stopIterations = true;
+		
+		for(int i = 0; i < k; i++){
+			if(!containsPattern(newMedoids, medoids[i])){
+				stopIterations = false;
 			}
+			medoids[i] = newMedoids[i];
+			medoids[i].setTestCluster(i + "");
 		}
-		return true;
+		
+		return stopIterations;
 	}
-
+	
+	private boolean containsPattern(Pattern[] patterns, Pattern pattern){
+		for(Pattern p : patterns){
+			if(p == pattern)
+				return true;
+		}
+		return false;
+	}
+	
 	private Pattern[] chooseInitialMedoids() {
-		List<Pattern> medoids = new ArrayList<Pattern>();
+//		Pattern[] medoidPatterns = new Pattern[k];
+//		List<Pattern> medoids = new ArrayList<Pattern>();
+//		
+//		List<Pattern> patternList = new ArrayList<Pattern>();
+//		for(String classLabel : dataSet.keySet()){
+//			patternList.addAll(dataSet.get(classLabel));
+//		}
+//		Pattern medoidPattern = getFarthestPattern(patternList, patternList);
+//		medoids.add(medoidPattern);
+//		medoidPattern.setTestCluster("1");
+//		for(int i = 0; i < k - 1; i++){
+//			medoidPattern = getFarthestPattern(patternList, medoids);
+//			medoids.add(medoidPattern);
+//			medoidPattern.setTestCluster(( i + 2) + "");
+//		}
+//		for(int i = 0; i < k; i++){
+//			Pattern p = medoids.get(i);
+//			medoidPatterns[i] = p;
+//		}
+		
 		
 		List<Pattern> patternList = new ArrayList<Pattern>();
 		for(String classLabel : dataSet.keySet()){
 			patternList.addAll(dataSet.get(classLabel));
 		}
-		Pattern medoidPattern = getFarthestPattern(patternList, patternList);
-		medoids.add(medoidPattern);
-		medoidPattern.setTestCluster("1");
-		for(int i = 0; i < k - 1; i++){
-			medoidPattern = getFarthestPattern(patternList, medoids);
-			medoids.add(medoidPattern);
-			medoidPattern.setTestCluster(( i + 2) + "");
-		}
+		
 		Pattern[] medoidPatterns = new Pattern[k];
 		for(int i = 0; i < k; i++){
-			Pattern p = medoids.get(i);
-			medoidPatterns[i] = p;
+			medoidPatterns[i] = patternList.get((int) (Math.random() * patternList.size()));
+			medoidPatterns[i].setTestCluster(i + "");
 		}
 		return medoidPatterns;
 	}
