@@ -56,7 +56,7 @@ public class ClusteringManager {
 		visualizer=new Visualizer(title);
 		visualizer.visualize(clusteredDataSet,false);
 		evaluator=new ClusteringEvaluator(dataSet,clusteredDataSet);
-		System.out.println("Evaluation : F = "+evaluator.evaluate());
+		System.out.println("F = "+evaluator.evaluate());
 		
 	}
 	
