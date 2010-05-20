@@ -40,14 +40,15 @@ public class DBSCAN extends ClusteringAlgorithm {
 	}
 
 	private boolean expandCluster(HashMap<String, List<Pattern>> clusteredPatterns, List<Pattern> patternList, Pattern srcPattern, int clusterID) {
-		clusteredPatterns.put(clusterID+"", new ArrayList<Pattern>());
+		String clusterLabel = clusterID+"";
+		clusteredPatterns.put(clusterLabel, new ArrayList<Pattern>());
 		List<Pattern> seeds = regionQuery(patternList, srcPattern);
 		if(seeds.size() < minPts){
 			srcPattern.setTestCluster("noise");
 			return false;
 		}
-		changeClusterIDs(seeds, clusterID);
-		clusteredPatterns.get(clusterID+"").addAll(seeds);
+		changeClusterIDs(seeds, clusterLabel);
+		clusteredPatterns.get(clusterLabel).addAll(seeds);
 		
 		while(seeds.size() > 0){
 			Pattern currentP = seeds.get(0);
@@ -55,11 +56,11 @@ public class DBSCAN extends ClusteringAlgorithm {
 			if(curPatternResults.size() >= minPts){
 				for(Pattern resultP : curPatternResults){
 					if(resultP.getTestCluster() == null || resultP.getTestCluster().equals("noise")){
-						resultP.setTestCluster(clusterID + "");
-						clusteredPatterns.get(clusterID+"").add(resultP);
 						if(resultP.getTestCluster() == null){
 							seeds.add(resultP);
 						}
+						resultP.setTestCluster(clusterLabel);
+						clusteredPatterns.get(clusterLabel).add(resultP);
 					}
 				}
 
@@ -72,7 +73,7 @@ public class DBSCAN extends ClusteringAlgorithm {
 	private List<Pattern> regionQuery(List<Pattern> patternList, Pattern centerPattern){
 		List<Pattern> regionPattern = new ArrayList<Pattern>();
 		for(Pattern pattern : patternList){
-			if(Distance.calculateDistance(centerPattern, pattern) <= eps){
+			if(pattern != centerPattern && Distance.calculateDistance(centerPattern, pattern) <= eps){
 				regionPattern.add(pattern);
 			}
 		}
@@ -80,10 +81,33 @@ public class DBSCAN extends ClusteringAlgorithm {
 		return regionPattern;
 	}
 	
-	private void changeClusterIDs(List<Pattern> patternList, int clusterID){
+	private void changeClusterIDs(List<Pattern> patternList, String clusterID){
 		for(Pattern p : patternList){
-			p.setTestCluster(clusterID + "");
+			p.setTestCluster(clusterID);
 		}
 	}
-
+	
+	public static void main(String[] args) {
+		List<Pattern> list = new ArrayList<Pattern>();
+		for(int i = 0; i < 5; i++){
+			Pattern p =new Pattern(null, null);
+			p.setTestCluster(i+"");
+			list.add(p);
+		}
+		
+		int i = 0;
+		for(Pattern p : list){
+			if(p.getTestCluster().equals("22")){
+				System.out.println("yes" + i);
+			}
+//			for(Pattern p1 : list){
+//				System.out.print(p1.getTestCluster()+ " ");
+//			}
+//			System.out.println();
+			if(i == 0){
+				list.get(2).setTestCluster("22");
+			}
+			i++;
+		}
+	}
 }
