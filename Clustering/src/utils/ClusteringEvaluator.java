@@ -28,6 +28,7 @@ public class ClusteringEvaluator {
 		double FinalF=0.0;
 		BuildConfusionMatrix();
 		Iterator<String> matrixIterator=confusionMatrix.keySet().iterator();
+		
 		String classkey;
 		long totalSize = 0;
 		KF kf;double acctmp;
@@ -43,6 +44,7 @@ public class ClusteringEvaluator {
 			 System.out.println("Acc [ "+classkey+" ]= "+acctmp);
 			 System.out.println();
 			 semiFinalF+=((dataSet.get(classkey).size()))*  kf.getF();
+			 System.out.println("class acc " + getClassClusterIntersection(classkey, kf.k));
 			 totalAcc+=getClassClusterIntersection(classkey, kf.k);
 		}
 		
@@ -51,11 +53,15 @@ public class ClusteringEvaluator {
 		System.out.println();
 		FinalF=(semiFinalF / ( (double)totalSize ));
 		totalAcc=totalAcc/(double)totalSize;
+		if(clusteredDataSet.size()==1){
+			totalAcc=(double)clusteredDataSet.size()/(double) dataSet.size();
+		}
 		System.out.println("Total Accurcy = "+ totalAcc*100 +" %");
 		System.out.println();
 		return FinalF;
 	}
 	//------------------------------------------------------------------------------------------------------------------------------
+	
 	private long getTotalSizeOfPatterns (){
 		String c;
 		datasetIterator1=dataSet.keySet().iterator();
