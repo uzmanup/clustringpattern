@@ -13,7 +13,7 @@ public class ClusteringEvaluator {
 	private Iterator<String> datasetIterator1;
 	private Iterator<String> clusteringIterator;
 	private HashMap<String, List<KF>> confusionMatrix;
-	
+	private double p,r;
 	
 	public ClusteringEvaluator(HashMap<String, List<Pattern>> dataSet, HashMap<String, List<Pattern>> clusteredDataSet) {
 		this.dataSet = dataSet;
@@ -29,13 +29,23 @@ public class ClusteringEvaluator {
 		Iterator<String> matrixIterator=confusionMatrix.keySet().iterator();
 		String classkey;
 		long totalSize = 0;
-		
+		KF kf;
+		System.out.println();
+		System.out.println("======================================EVALUATION=============================");
 		while(matrixIterator.hasNext()){
+			
 			classkey=matrixIterator.next();
-			semiFinalF+=((dataSet.get(classkey).size()))*(getMaxKF((ArrayList<KF>) confusionMatrix.get(classkey)).getF());
+			kf=getMaxKF((ArrayList<KF>) confusionMatrix.get(classkey));
+			System.out.println();
+			 System.out.println("P [ "+classkey+ " ] = "+kf.p+"     R [ "+classkey+ " ] = "+kf.r+"     F [ "+classkey+ " ] = "+kf.f +"    size ( "+classkey+" ) = "+dataSet.get(classkey).size()) ;
+			System.out.println();
+			 semiFinalF+=((dataSet.get(classkey).size()))*  kf.getF();
 			
 		}
+		
 		totalSize=getTotalSizeOfPatterns();
+		System.out.println("total # of patterns = "+totalSize);
+		System.out.println();
 		FinalF=(semiFinalF / ( (double)totalSize ));
 		return FinalF;
 	}
@@ -59,7 +69,7 @@ public class ClusteringEvaluator {
 		String c,k;
 		confusionMatrix=new HashMap<String, List<KF>>();
 		List<KF> classCluster;
-		
+		double f; KF mkf;
 		datasetIterator1=dataSet.keySet().iterator();
 		while(datasetIterator1.hasNext()){
 			c=datasetIterator1.next();
@@ -67,7 +77,9 @@ public class ClusteringEvaluator {
 			classCluster=new ArrayList<KF>();
 			while(clusteringIterator.hasNext()){
 				k=clusteringIterator.next();
-				classCluster.add(new KF(k,calculateF(c, k)));
+				f=calculateF(c, k);
+				mkf=new KF(k,f,this.p,this.r);
+				classCluster.add(mkf);
 			}
 			confusionMatrix.put(c, classCluster);
 		}
@@ -84,7 +96,8 @@ public class ClusteringEvaluator {
 		
 		P=((double)intersection)/ ((double)sizeOfK);
 		R=((double)intersection)/( (double)sizeOfC);
-		
+		this.p=P;
+		this.r=R;
 		return ((2*P*R)/(P+R));
 	}
 	
@@ -117,12 +130,22 @@ public class ClusteringEvaluator {
 	
 	//inner class F,k
 	class KF {
-		private double f;
+		private double f,p,r;
+		public double getP() {
+			return p;
+		}
+
+		public double getR() {
+			return r;
+		}
+
 		private String k;
 		
-		public KF( String k,double f) {
+		public KF( String k,double f,double p,double r) {
 			this.f=f;
 			this.k=k;
+			this.p=p;
+			this.r=r;
 		}
 		
 		public double getF() {
@@ -140,6 +163,14 @@ public class ClusteringEvaluator {
 		public void setK(String k) {
 			this.k = k;
 		}
+
+		public void setP(double p) {
+			this.p = p;
+		}
+
+		public void setR(double r) {
+			this.r = r;
+		}
 		
 	}
 	
@@ -148,21 +179,27 @@ public class ClusteringEvaluator {
 	
 	private KF getMaxKF (ArrayList<KF> list){
 		double max=0.0;
-		KF maxKF=new KF("",0.0);
-		double currentF;
+		KF maxKF=new KF("",0.0,0,0);
+		double currentF;double currentP;double currentR;
 		String currentk;
 		
 		for (KF kf : list) {
 			currentF=kf.getF();
 			currentk=kf.getK();
+			currentP=kf.getP();
+			currentR=kf.getR();
 			
 			if(currentF > max){
 				max=currentF;
 				maxKF.setF(currentF);
 				maxKF.setK(currentk);
+				maxKF.setP(currentP);
+				maxKF.setR(currentR);
 			}
 		}
 		return maxKF;
 	}
+
+	
 	
 }

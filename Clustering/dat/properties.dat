@@ -1,6 +1,5 @@
-
-dataset=dat/pen
-estimation=Parzen
-k=50
-h=80
-classification=MAP
+Dataset = dat/half-rings-all.txt
+ClusteringAlgorithm = SL
+Eps = 900
+minPts = 3
+K = 2

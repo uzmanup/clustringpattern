@@ -23,12 +23,7 @@ public class Cluster {
 	}
 	
 	public List<Pattern> getPatterns(){
-		List<Pattern> containedPatterns = new ArrayList<Pattern>();
-		containedPatterns.addAll(patternsList);
-		for(Cluster c : clusterList){
-				containedPatterns.addAll(c.getPatterns());
-		}
-		return containedPatterns;
+		return this.patternsList;
 	}
 
 	
