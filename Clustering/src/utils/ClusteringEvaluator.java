@@ -24,12 +24,13 @@ public class ClusteringEvaluator {
 	
 	public double evaluate(){
 		double semiFinalF=0.0;
+		double totalAcc = 0;
 		double FinalF=0.0;
 		BuildConfusionMatrix();
 		Iterator<String> matrixIterator=confusionMatrix.keySet().iterator();
 		String classkey;
 		long totalSize = 0;
-		KF kf;
+		KF kf;double acctmp;
 		System.out.println();
 		System.out.println("======================================EVALUATION=============================");
 		while(matrixIterator.hasNext()){
@@ -38,15 +39,19 @@ public class ClusteringEvaluator {
 			kf=getMaxKF((ArrayList<KF>) confusionMatrix.get(classkey));
 			System.out.println();
 			 System.out.println("P [ "+classkey+ " ] = "+kf.p+"     R [ "+classkey+ " ] = "+kf.r+"     F [ "+classkey+ " ] = "+kf.f +"    size ( "+classkey+" ) = "+dataSet.get(classkey).size()) ;
-			System.out.println();
+			acctmp=(double)clusteredDataSet.get(kf.k).size()/(double)(dataSet.get(classkey).size());
+			 System.out.println("Acc [ "+classkey+" ]= "+acctmp);
+			 System.out.println();
 			 semiFinalF+=((dataSet.get(classkey).size()))*  kf.getF();
-			
+			 totalAcc+=(dataSet.get(classkey).size())* acctmp;
 		}
 		
 		totalSize=getTotalSizeOfPatterns();
 		System.out.println("total # of patterns = "+totalSize);
 		System.out.println();
 		FinalF=(semiFinalF / ( (double)totalSize ));
+		totalAcc=totalAcc/(double)totalSize;
+		System.out.println("Total Accurcy = "+ totalAcc);
 		return FinalF;
 	}
 
